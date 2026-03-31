@@ -1,8 +1,11 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import { useRouter } from "expo-router";
+import React, { useCallback, useState } from "react";
 import {
   Modal,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -10,6 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { Swipeable } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const TasksScreen = () => {
@@ -45,10 +49,21 @@ const TasksScreen = () => {
     },
   ]);
 
+  const router = useRouter();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskCategory, setNewTaskCategory] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }, 2000);
+  }, []);
 
   const handleAddTask = () => {
     if (newTaskTitle.trim() === "") return;
@@ -61,15 +76,50 @@ const TasksScreen = () => {
       priority: "Medium",
     };
 
+    // Trigger haptic on adding a task
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
     setTasks([...tasks, newTask]);
     setNewTaskTitle("");
     setNewTaskCategory("");
     setIsModalVisible(false);
   };
 
+  const handleDeleteTask = (id: number) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    setTasks(tasks.filter((task) => task.id !== id));
+  };
+
+  const toggleTaskCompletion = (id: number) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setTasks(
+      tasks.map((task) =>
+        task.id === id ? { ...task, completed: !task.completed } : task,
+      ),
+    );
+  };
+
+  const renderRightActions = (id: number) => {
+    return (
+      <TouchableOpacity
+        style={styles.deleteAction}
+        onPress={() => handleDeleteTask(id)}
+      >
+        <View style={styles.deleteActionContent}>
+          <MaterialIcons name="delete-outline" size={28} color="#fff" />
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         {/* Gradient Header */}
         <LinearGradient
           colors={["#1E293B", "#0F172A"]}
@@ -84,12 +134,23 @@ const TasksScreen = () => {
                 You have 3 tasks for today
               </Text>
             </View>
-            <TouchableOpacity
-              style={styles.addButton}
-              onPress={() => setIsModalVisible(true)}
-            >
-              <MaterialIcons name="add" size={28} color="#1E293B" />
-            </TouchableOpacity>
+            <View style={styles.headerActions}>
+              <TouchableOpacity
+                onPress={() => router.push("/notifications")}
+                style={styles.notificationBtn}
+              >
+                <MaterialIcons name="notifications" size={28} color="#fff" />
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>3</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.addButton}
+                onPress={() => setIsModalVisible(true)}
+              >
+                <MaterialIcons name="add" size={28} color="#1E293B" />
+              </TouchableOpacity>
+            </View>
           </View>
         </LinearGradient>
 
@@ -110,56 +171,68 @@ const TasksScreen = () => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Daily Tasks</Text>
           {tasks.map((task) => (
-            <TouchableOpacity key={task.id} style={styles.taskCard}>
-              <View style={styles.taskMain}>
-                <MaterialIcons
-                  name={
-                    task.completed ? "check-circle" : "radio-button-unchecked"
-                  }
-                  size={26}
-                  color={task.completed ? "#10B981" : "#CBD5E1"}
-                />
-                <View style={styles.taskDetails}>
-                  <Text
-                    style={[
-                      styles.taskTitle,
-                      task.completed && styles.completedText,
-                    ]}
-                  >
-                    {task.title}
-                  </Text>
-                  <Text style={styles.taskCategory}>{task.category}</Text>
+            <Swipeable
+              key={task.id}
+              renderRightActions={() => renderRightActions(task.id)}
+              friction={2} // Controls the elasticity of the swipe
+              rightThreshold={80} // How far to swipe to fully open and "stay"
+              overshootRight={false} // Prevents swiping too far
+            >
+              <TouchableOpacity
+                style={styles.taskCard}
+                onPress={() => toggleTaskCompletion(task.id)}
+              >
+                <View style={styles.taskMain}>
+                  <MaterialIcons
+                    name={
+                      task.completed ? "check-circle" : "radio-button-unchecked"
+                    }
+                    size={26}
+                    color={task.completed ? "#10B981" : "#CBD5E1"}
+                  />
+                  <View style={styles.taskDetails}>
+                    <Text
+                      style={[
+                        styles.taskTitle,
+                        task.completed && styles.completedText,
+                      ]}
+                    >
+                      {task.title}
+                    </Text>
+                    <Text style={styles.taskCategory}>{task.category}</Text>
+                  </View>
                 </View>
-              </View>
-              <View style={styles.taskActions}>
-                <TouchableOpacity
-                  style={styles.taskEditButton}
-                  onPress={() => setIsEditModalVisible(true)}
-                >
-                  <MaterialIcons name="edit" size={20} color="#64748B" />
-                </TouchableOpacity>
-                <View
-                  style={[
-                    styles.priorityBadge,
-                    {
-                      backgroundColor:
-                        task.priority === "High" ? "#FEE2E2" : "#F1F5F9",
-                    },
-                  ]}
-                >
-                  <Text
+                <View style={styles.taskActions}>
+                  <TouchableOpacity
+                    style={styles.taskEditButton}
+                    onPress={() => setIsEditModalVisible(true)}
+                  >
+                    <MaterialIcons name="edit" size={20} color="#64748B" />
+                  </TouchableOpacity>
+                  <View
                     style={[
-                      styles.priorityText,
+                      styles.priorityBadge,
                       {
-                        color: task.priority === "High" ? "#EF4444" : "#64748B",
+                        backgroundColor:
+                          task.priority === "High" ? "#FEE2E2" : "#F1F5F9",
                       },
                     ]}
                   >
-                    {task.priority}
-                  </Text>
+                    <Text
+                      style={[
+                        styles.priorityText,
+                        {
+                          color:
+                            task.priority === "High" ? "#EF4444" : "#64748B",
+                        },
+                      ]}
+                    >
+                      {task.priority}
+                    </Text>
+                  </View>
                 </View>
-              </View>
-            </TouchableOpacity>
+              </TouchableOpacity>
+            </Swipeable>
           ))}
         </View>
       </ScrollView>
@@ -296,6 +369,32 @@ const styles = StyleSheet.create({
     color: "rgba(255, 255, 255, 0.8)",
     marginTop: 4,
   },
+  headerActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+  },
+  notificationBtn: {
+    position: "relative",
+  },
+  badge: {
+    position: "absolute",
+    top: -4,
+    right: -4,
+    backgroundColor: "#EF4444",
+    borderRadius: 10,
+    minWidth: 18,
+    height: 18,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#1E293B",
+  },
+  badgeText: {
+    color: "#fff",
+    fontSize: 10,
+    fontWeight: "bold",
+  },
   addButton: {
     backgroundColor: "#fff",
     width: 48,
@@ -362,6 +461,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 12,
     elevation: 1,
+  },
+  deleteAction: {
+    backgroundColor: "#EF4444",
+    justifyContent: "center",
+    alignItems: "flex-end",
+    borderRadius: 20,
+    marginBottom: 12,
+    width: "100%",
+  },
+  deleteActionContent: {
+    paddingHorizontal: 24,
+    justifyContent: "center",
+    height: "100%",
   },
   taskMain: {
     flexDirection: "row",

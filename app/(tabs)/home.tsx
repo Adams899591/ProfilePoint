@@ -32,12 +32,23 @@ const HomeScreen = () => {
               <Text style={styles.greeting}>Hello, Usman!</Text>
               <Text style={styles.subtitle}>Your dashboard is ready</Text>
             </View>
-            <Image
-              source={{
-                uri: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=150&auto=format&fit=crop",
-              }}
-              style={styles.profileImage}
-            />
+            <View style={styles.headerActions}>
+              <TouchableOpacity
+                onPress={() => router.push("/notifications")}
+                style={styles.notificationBtn}
+              >
+                <MaterialIcons name="notifications" size={28} color="#fff" />
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>3</Text>
+                </View>
+              </TouchableOpacity>
+              <Image
+                source={{
+                  uri: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=150&auto=format&fit=crop",
+                }}
+                style={styles.profileImage}
+              />
+            </View>
           </View>
         </LinearGradient>
 
@@ -242,6 +253,32 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "rgba(255, 255, 255, 0.8)",
     marginTop: 4,
+  },
+  headerActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+  },
+  notificationBtn: {
+    position: "relative",
+  },
+  badge: {
+    position: "absolute",
+    top: -4,
+    right: -4,
+    backgroundColor: "#EF4444",
+    borderRadius: 10,
+    minWidth: 18,
+    height: 18,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#1E293B",
+  },
+  badgeText: {
+    color: "#fff",
+    fontSize: 10,
+    fontWeight: "bold",
   },
   profileImage: {
     width: 60,

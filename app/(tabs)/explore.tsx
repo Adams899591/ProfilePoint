@@ -1,5 +1,6 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import React from "react";
 import {
   Image,
@@ -13,6 +14,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const ExploreScreen = () => {
+  const router = useRouter();
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -24,11 +27,22 @@ const ExploreScreen = () => {
           style={styles.headerGradient}
         >
           <View style={styles.headerContent}>
-            <View>
-              <Text style={styles.headerTitle}>Explore</Text>
-              <Text style={styles.headerSubtitle}>
-                Discover new opportunities
-              </Text>
+            <View style={styles.headerTop}>
+              <View>
+                <Text style={styles.headerTitle}>Explore</Text>
+                <Text style={styles.headerSubtitle}>
+                  Discover new opportunities
+                </Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => router.push("/notifications")}
+                style={styles.notificationBtn}
+              >
+                <MaterialIcons name="notifications" size={28} color="#fff" />
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>3</Text>
+                </View>
+              </TouchableOpacity>
             </View>
             <View style={styles.searchContainer}>
               <MaterialIcons name="search" size={22} color="#94A3B8" />
@@ -145,6 +159,32 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     gap: 20,
+  },
+  headerTop: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+  notificationBtn: {
+    position: "relative",
+  },
+  badge: {
+    position: "absolute",
+    top: -4,
+    right: -4,
+    backgroundColor: "#EF4444",
+    borderRadius: 10,
+    minWidth: 18,
+    height: 18,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#1E293B",
+  },
+  badgeText: {
+    color: "#fff",
+    fontSize: 10,
+    fontWeight: "bold",
   },
   headerTitle: {
     fontSize: 28,

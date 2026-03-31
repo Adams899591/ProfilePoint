@@ -85,6 +85,15 @@ const profile = () => {
           style={styles.headerGradient}
         >
           <View style={styles.profileHeader}>
+            <TouchableOpacity
+              onPress={() => router.push("/notifications")}
+              style={styles.topNotificationBtn}
+            >
+              <MaterialIcons name="notifications" size={28} color="#fff" />
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>3</Text>
+              </View>
+            </TouchableOpacity>
             <View style={styles.imageContainer}>
               <Image
                 source={{ uri: profileImage }}
@@ -202,6 +211,30 @@ const styles = StyleSheet.create({
   },
   profileHeader: {
     alignItems: "center",
+  },
+  topNotificationBtn: {
+    position: "absolute",
+    top: 0,
+    right: 24,
+    zIndex: 10,
+  },
+  badge: {
+    position: "absolute",
+    top: -4,
+    right: -4,
+    backgroundColor: "#EF4444",
+    borderRadius: 10,
+    minWidth: 18,
+    height: 18,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#0F172A",
+  },
+  badgeText: {
+    color: "#fff",
+    fontSize: 10,
+    fontWeight: "bold",
   },
   imageContainer: {
     position: "relative",

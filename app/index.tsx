@@ -1,4 +1,5 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import * as Haptics from "expo-haptics";
 import * as LocalAuthentication from "expo-local-authentication";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -47,6 +48,9 @@ const LoginScreen = () => {
     });
 
     if (result.success) {
+      // Provide physical success feedback
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
       setBiometricStatus("success");
 
       setTimeout(() => {
