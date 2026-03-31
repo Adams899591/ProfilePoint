@@ -2,13 +2,13 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import {
-    Modal,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -72,7 +72,7 @@ const TasksScreen = () => {
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Gradient Header */}
         <LinearGradient
-          colors={["#4F46E5", "#3730A3"]}
+          colors={["#1E293B", "#0F172A"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.headerGradient}
@@ -88,7 +88,7 @@ const TasksScreen = () => {
               style={styles.addButton}
               onPress={() => setIsModalVisible(true)}
             >
-              <MaterialIcons name="add" size={28} color="#4F46E5" />
+              <MaterialIcons name="add" size={28} color="#1E293B" />
             </TouchableOpacity>
           </View>
         </LinearGradient>
@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
   progressValue: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#4F46E5",
+    color: "#1E293B",
   },
   progressBarBg: {
     height: 8,
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
   },
   progressBarFill: {
     height: "100%",
-    backgroundColor: "#4F46E5",
+    backgroundColor: "#1E293B",
   },
   taskCard: {
     backgroundColor: "#fff",
@@ -458,7 +458,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F1F5F9",
   },
   saveButton: {
-    backgroundColor: "#4F46E5",
+    backgroundColor: "#1E293B",
   },
   modalCancelText: {
     color: "#64748B",

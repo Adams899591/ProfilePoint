@@ -17,6 +17,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [biometricStatus, setBiometricStatus] = useState<"idle" | "success">(
+    "idle",
+  );
   const router = useRouter();
 
   const handleBiometricAuth = async () => {
@@ -44,7 +47,12 @@ const LoginScreen = () => {
     });
 
     if (result.success) {
-      router.replace("/home");
+      setBiometricStatus("success");
+
+      setTimeout(() => {
+        setBiometricStatus("idle");
+        router.replace("/home");
+      }, 1500);
     }
   };
 
@@ -72,6 +80,7 @@ const LoginScreen = () => {
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 autoCapitalize="none"
+                autoCorrect={false}
               />
             </View>
 
@@ -96,11 +105,19 @@ const LoginScreen = () => {
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={styles.biometricButton}
+                style={[
+                  styles.biometricButton,
+                  biometricStatus === "success" &&
+                    styles.biometricButtonSuccess,
+                ]}
                 activeOpacity={0.7}
                 onPress={handleBiometricAuth}
               >
-                <MaterialIcons name="fingerprint" size={32} color="#007AFF" />
+                <MaterialIcons
+                  name={biometricStatus === "success" ? "check" : "fingerprint"}
+                  size={32}
+                  color={biometricStatus === "success" ? "#fff" : "#007AFF"}
+                />
               </TouchableOpacity>
             </View>
 
@@ -254,5 +271,9 @@ const styles = StyleSheet.create({
     color: "#1E293B",
     fontSize: 16,
     fontWeight: "600",
+  },
+  biometricButtonSuccess: {
+    backgroundColor: "#10B981",
+    borderColor: "#10B981",
   },
 });

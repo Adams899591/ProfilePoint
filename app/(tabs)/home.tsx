@@ -22,7 +22,7 @@ const HomeScreen = () => {
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Professional Header with Linear Gradient */}
         <LinearGradient
-          colors={["#007AFF", "#0056b3"]}
+          colors={["#1E293B", "#0F172A"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.headerGradient}

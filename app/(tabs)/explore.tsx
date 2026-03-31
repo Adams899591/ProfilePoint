@@ -2,13 +2,13 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import {
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -18,7 +18,7 @@ const ExploreScreen = () => {
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header with Search */}
         <LinearGradient
-          colors={["#10B981", "#059669"]}
+          colors={["#1E293B", "#0F172A"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.headerGradient}
@@ -112,7 +112,7 @@ const ExploreScreen = () => {
                   <MaterialIcons
                     name={item.icon as any}
                     size={24}
-                    color="#10B981"
+                    color="#1E293B"
                   />
                 </View>
                 <View style={styles.itemTextContainer}>
